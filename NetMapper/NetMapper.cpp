@@ -5,6 +5,8 @@
 
 #include <ws2tcpip.h>
 #include <iostream>
+#include <mutex>
+#include <thread>
 
 #include <EthLayer.h>
 #include <IPv4Layer.h>
@@ -88,9 +90,7 @@ bool rawTcpPing(pcpp::PcapLiveDevice* dev, pcpp::EthLayer ethLayer, pcpp::IPv4Ad
 
     packet.computeCalculateFields();
 
-    dev->sendPacket(&packet);
-    
-    return true;
+    return dev->sendPacket(&packet);
 }
 
 void parsePacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* hosts) {
@@ -107,8 +107,28 @@ void parsePacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* ho
     }
 }
 
+void pingWorker(uint32_t* iterator, uint32_t* endIP, mutex* iteratorLock, pcpp::PcapLiveDevice* dev, pcpp::EthLayer* ethLayer, pcpp::TcpLayer* tcpLayer) {
+    iteratorLock->lock();
+    while (*iterator <= *endIP) {
+        const uint8_t bytes[4] = {
+            (*iterator & 0xFF000000) >> 24,
+            (*iterator & 0x00FF0000) >> 16,
+            (*iterator & 0x0000FF00) >> 8,
+            (*iterator & 0x000000FF) };
+        (*iterator)++;
+        iteratorLock->unlock();
+
+        pcpp::IPv4Address dstIpAddr = bytes;
+        rawTcpPing(dev, *ethLayer, &dstIpAddr, *tcpLayer);
+
+        iteratorLock->lock();
+    }
+    iteratorLock->unlock();
+}
+
 int main() {
     const int srcPort = 4294;
+    const int threadCount = 1;
     
     // Test inputs
     pcpp::IPv4Address srcIpAddr = "10.10.10.15";
@@ -135,7 +155,6 @@ int main() {
     tcpLayer.getTcpHeader()->synFlag = 1;
 
     // Create IP iterator
-    uint32_t iterator;
     uint32_t startIP = (
         dstIpStart[0] << 24 |
         dstIpStart[1] << 16 |
@@ -146,24 +165,26 @@ int main() {
         dstIpEnd[1] << 16 |
         dstIpEnd[2] << 8 |
         dstIpEnd[3]);
+    uint32_t iterator = startIP;
     
     // Start packet listening.
     dev->open(deviceConfig);
     dev->setFilter(recieveFilter);
     dev->startCapture(parsePacket, hosts);
 
-    // TODO: Add multithreaded packet sending.
+    // Start ping threads
+    mutex iteratorLock;
+    thread threads[threadCount];
+
     auto start = chrono::high_resolution_clock::now();
-    for (iterator = startIP; iterator <= endIP; iterator++)
-    {
-        const uint8_t bytes[4] = {
-            (iterator & 0xFF000000) >> 24,
-            (iterator & 0x00FF0000) >> 16,
-            (iterator & 0x0000FF00) >> 8,
-            (iterator & 0x000000FF)};
-        pcpp::IPv4Address dstIpAddr = bytes;
-        
-        rawTcpPing(dev, ethLayer, &dstIpAddr, tcpLayer);
+    for (int i = 0; i < threadCount; i++) {
+        threads[i] = thread(pingWorker, &iterator, &endIP, &iteratorLock, dev, &ethLayer, &tcpLayer);
+    }
+
+    for (thread& t : threads) {
+        if (t.joinable()) {
+            t.join();
+        }
     }
     auto stop = chrono::high_resolution_clock::now();
 
