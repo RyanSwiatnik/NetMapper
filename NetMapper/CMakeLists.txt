@@ -7,7 +7,7 @@ set(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 set(CMAKE_PREFIX_PATH "F:/vcpkg/installed/x64-windows/share")
 
 # Add source to this project's executable.
-add_executable (NetMapper "NetMapper.cpp" "NetMapper.h")
+add_executable (NetMapper "NetMapper.cpp" "NetMapper.h" "TCPScan.cpp" "IpIterator.cpp" "IpIterator.h" "TCPScan.h" "TraceMap.cpp" "TraceMap.h")
 
 find_package(unofficial-pcapplusplus CONFIG REQUIRED)
 target_link_libraries(NetMapper PRIVATE unofficial::pcapplusplus::pcappp unofficial::pcapplusplus::commonpp unofficial::pcapplusplus::packetpp)

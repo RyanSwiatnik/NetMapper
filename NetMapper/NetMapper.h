@@ -4,5 +4,11 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <sstream>
 
-// TODO: Reference additional headers your program requires here.
+enum Mode {
+	none,
+	tcpScan,
+	traceMap
+};
