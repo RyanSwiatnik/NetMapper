@@ -6,7 +6,7 @@
 #include <IPv4Layer.h>
 #include "TCPScan.h"
 #include "NetMapper.h"
-#include "TraceMap.h"
+#include "TraceMap/TraceMap.h"
 
 using namespace std;
 
