@@ -1,5 +1,7 @@
 #include <IPv4Layer.h>
 #include "TraceMap.h"
+#include "Node.h"
+#include "NetMap.h"
 
 using namespace std;
 
