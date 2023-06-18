@@ -12,4 +12,5 @@ public:
 	std::pair<std::unordered_map<std::uint32_t, Node>::iterator, bool> addNode(Node node);
 
 	Node* getNode(std::uint32_t);
+	std::unordered_map<std::uint32_t, Node>* getNodes();
 };

@@ -23,3 +23,13 @@ uint32_t Node::getIp()
 {
 	return ip;
 }
+
+std::string Node::getDomainName()
+{
+	return domainName;
+}
+
+std::unordered_set<std::uint32_t>* Node::getLinks()
+{
+	return &links;
+}

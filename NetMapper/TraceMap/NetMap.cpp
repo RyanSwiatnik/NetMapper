@@ -14,7 +14,7 @@ void NetMap::addRoute(list<Node> nodes)
 		Node* node = &addNode(newNode).first->second;
 		if (previousNode != nullptr) {
 			previousNode->addLink(node);
-			node->addLink(previousNode);
+			//node->addLink(previousNode);
 		}
 		previousNode = node;
 	}
@@ -28,4 +28,8 @@ pair<unordered_map<std::uint32_t, Node>::iterator, bool> NetMap::addNode(Node no
 Node* NetMap::getNode(uint32_t ip)
 {
 	return &nodes[ip];
+}
+
+unordered_map<uint32_t, Node>* NetMap::getNodes() {
+	return &nodes;
 }

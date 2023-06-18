@@ -15,4 +15,6 @@ public:
 	bool addLink(Node* node);
 
 	std::uint32_t getIp();
+	std::string getDomainName();
+	std::unordered_set<std::uint32_t>* getLinks();
 };
