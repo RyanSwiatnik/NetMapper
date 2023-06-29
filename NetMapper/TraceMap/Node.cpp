@@ -2,7 +2,9 @@
 
 using namespace std;
 
-Node::Node() {}
+Node::Node() {
+	Node::ip = 0;
+}
 
 Node::Node(uint32_t ip)
 {

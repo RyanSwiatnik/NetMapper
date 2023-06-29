@@ -22,6 +22,7 @@ void NetMap::addRoute(list<Node> nodes)
 
 pair<unordered_map<std::uint32_t, Node>::iterator, bool> NetMap::addNode(Node node)
 {
+	// TODO: make thread safe.
 	return nodes.insert(make_pair(node.getIp(), node));
 }
 
