@@ -37,8 +37,7 @@ void traceWorker(ThreadManager* threadManager, int id) {
 		}
 
 		// Add finished route to map
-		threadManager->map->addRoute(threadManager->nodes[id]);
-		threadManager->nodes[id] = list<Node>();
+		threadManager->saveRoute(id);
 	}
 }
 
@@ -107,4 +106,9 @@ void ThreadManager::addReply(int id, bool final, uint32_t ip) {
 	}
 	nodes[id].push_back(Node(ip));
 	cout << "Added node: " << pcpp::IPv4Address(ip) << endl;
+}
+
+void ThreadManager::saveRoute(int id) {
+	map->addRoute(nodes[id]);
+	nodes[id] = list<Node>();
 }
