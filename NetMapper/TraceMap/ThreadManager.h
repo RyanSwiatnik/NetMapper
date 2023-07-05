@@ -7,6 +7,8 @@
 #include <list>
 #include <iostream>
 
+static bool halt = false;
+
 class ThreadManager {
 	NetMap* map;
 	std::vector<std::list<Node>> nodes;
@@ -21,8 +23,6 @@ public:
 
 	std::vector<std::condition_variable> cv;
 	std::vector<std::mutex> cv_m;
-
-	bool halt = false;
 
 	ThreadManager(pcpp::PcapLiveDevice* dev, pcpp::EthLayer* ethLayer, std::vector<std::uint8_t> dstIpStart, std::vector<std::uint8_t> dstIpEnd, int threadCount, NetMap* map);
 	void addReply(int id, bool final, std::uint32_t ip);

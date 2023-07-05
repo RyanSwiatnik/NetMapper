@@ -2,6 +2,7 @@
 #include <IPv4Layer.h>
 #include <IcmpLayer.h>
 #include <PcapLiveDeviceList.h>
+#include <signal.h>
 
 #include "Node.h"
 #include "NetMap.h"
@@ -10,12 +11,17 @@
 
 using namespace std;
 
+void ctrlHandler(int signum) {
+	halt = true;
+	cout << "Exiting, please wait..." << endl;
+}
+
 void traceWorker(ThreadManager* threadManager, int id) {
 	vector<uint8_t> randomIp(4);
 	random_device rd;
 	mt19937 gen(rd());
 
-	while (!threadManager->halt) {
+	while (!halt) {
 		// Generate random ip
 		for (int i = 0; i < 4; i++) {
 			uniform_int_distribution<> distr(threadManager->dstIpStart[i], threadManager->dstIpEnd[i]);
@@ -79,16 +85,15 @@ ThreadManager::ThreadManager(pcpp::PcapLiveDevice* dev, pcpp::EthLayer* ethLayer
 	ThreadManager::dstIpStart = dstIpStart;
 	ThreadManager::dstIpEnd = dstIpEnd;
 
+	// Create Ctrl+C catch.
+	signal(SIGINT, ctrlHandler);
+
 	dev->startCapture(parseIcmpPacket, this);
 
 	threads = vector<thread>(threadCount);
 	for (int i = 0; i < threadCount; i++) {
 		threads[i] = thread(traceWorker, this, i);
 	}
-
-	// Temp scan duration
-	Sleep(60000);
-	halt = true;
 
 	for (thread& t : threads) {
 		if (t.joinable()) {
