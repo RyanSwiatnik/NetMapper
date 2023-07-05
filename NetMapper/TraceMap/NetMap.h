@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <list>
 #include <cstdio>
+#include <iostream>
 
 class NetMap {
 	std::unordered_map<std::uint32_t, Node> nodes;

@@ -110,7 +110,6 @@ void ThreadManager::addReply(int id, bool final, uint32_t ip) {
 		cv[id].notify_one();
 	}
 	nodes[id].push_back(Node(ip));
-	cout << "Added node: " << pcpp::IPv4Address(ip) << endl;
 }
 
 void ThreadManager::saveRoute(int id) {

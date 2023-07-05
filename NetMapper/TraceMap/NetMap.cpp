@@ -1,3 +1,5 @@
+#include <IPv4Layer.h>
+
 #include "Node.h"
 #include "NetMap.h"
 
@@ -11,12 +13,19 @@ void NetMap::addRoute(list<Node> nodes)
 {
 	Node* previousNode = nullptr;
 	for (Node newNode : nodes) {
-		Node* node = &addNode(newNode).first->second;
+		pair<unordered_map<std::uint32_t, Node>::iterator, bool> addResult = addNode(newNode);
+		Node* node = &addResult.first->second;
 		if (previousNode != nullptr) {
 			previousNode->addLink(node);
 			//node->addLink(previousNode);
 		}
 		previousNode = node;
+
+		// If new node
+		if (addResult.second) {
+			cout << "Added node: " << pcpp::IPv4Address(node->getIp()) << endl;
+			// TODO: add new node reverse DNS lookup.
+		}
 	}
 }
 
