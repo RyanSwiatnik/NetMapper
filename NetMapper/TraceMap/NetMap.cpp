@@ -9,8 +9,10 @@ NetMap::NetMap()
 {
 }
 
-void NetMap::addRoute(list<Node> nodes)
+list<uint32_t> NetMap::addRoute(list<Node> nodes)
 {
+	list<uint32_t> newNodes;
+
 	Node* previousNode = nullptr;
 	for (Node newNode : nodes) {
 		pair<unordered_map<std::uint32_t, Node>::iterator, bool> addResult = addNode(newNode);
@@ -23,10 +25,11 @@ void NetMap::addRoute(list<Node> nodes)
 
 		// If new node
 		if (addResult.second) {
-			cout << "Added node: " << pcpp::IPv4Address(node->getIp()) << endl;
-			// TODO: add new node reverse DNS lookup.
+			newNodes.push_back(node->getIp());
 		}
 	}
+
+	return newNodes;
 }
 
 pair<unordered_map<std::uint32_t, Node>::iterator, bool> NetMap::addNode(Node node)

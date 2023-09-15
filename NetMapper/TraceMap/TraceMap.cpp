@@ -59,7 +59,6 @@ void TraceMap(int threadCount, pcpp::IPv4Address srcIpAddr, vector<uint8_t> dstI
 	// Identify and configure device.
 	pcpp::PcapLiveDevice* dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByIp(srcIpAddr);
 	pcpp::PcapLiveDevice::DeviceConfiguration deviceConfig(pcpp::PcapLiveDevice::DeviceMode::Normal, pcpp::PcapLiveDevice::PcapDirection::PCPP_IN);
-	pcpp::ProtoFilter recieveFilter(pcpp::ICMP);
 
 	// Get the MAC address of the interface
 	pcpp::MacAddress srcMacAddr = dev->getMacAddress();
@@ -70,7 +69,6 @@ void TraceMap(int threadCount, pcpp::IPv4Address srcIpAddr, vector<uint8_t> dstI
 	pcpp::EthLayer ethLayer(srcMacAddr, dstMacAddr);
 
 	dev->open(deviceConfig);
-	dev->setFilter(recieveFilter);
 
 	NetMap map;
 	ThreadManager threadManager(dev, &ethLayer, dstIpStart, dstIpEnd, threadCount, &map);

@@ -26,5 +26,6 @@ public:
 
 	ThreadManager(pcpp::PcapLiveDevice* dev, pcpp::EthLayer* ethLayer, std::vector<std::uint8_t> dstIpStart, std::vector<std::uint8_t> dstIpEnd, int threadCount, NetMap* map);
 	void addReply(int id, bool final, std::uint32_t ip);
+	void addDomainName(std::uint32_t ip, std::string domainName);
 	void saveRoute(int id);
 };
