@@ -57,10 +57,12 @@ void parsePacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* ho
 }
 
 void pingWorker(IpIterator* iterator, pcpp::PcapLiveDevice* dev, pcpp::EthLayer* ethLayer, pcpp::TcpLayer* tcpLayer) {
+	const int throttle = 10;
+	
 	pcpp::IPv4Address* dstIpAddr = &iterator->iterate();
 	while (dstIpAddr->isValid()) {
 		rawTcpPing(dev, *ethLayer, dstIpAddr, *tcpLayer);
-		Sleep(1);
+		Sleep(throttle);
 
 		dstIpAddr = &iterator->iterate();
 	}
